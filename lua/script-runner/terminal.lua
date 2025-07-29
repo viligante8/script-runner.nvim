@@ -39,11 +39,6 @@ local package_managers = {
     test = "bun test",
     start = "bun start"
   },
-  pip = {
-    install = "pip install -r requirements.txt",
-    run = "python",
-    test = "pytest",
-  },
 }
 
 -- Get optimal split direction based on window dimensions
@@ -269,68 +264,6 @@ function M.cleanup_all_terminals()
   current_terminal = nil
 end
 
--- Kill current terminal process
-function M.kill_current_terminal()
-  if current_terminal and terminals[current_terminal] then
-    local terminal_info = terminals[current_terminal]
-    if terminal_info.job_id then
-      vim.fn.jobstop(terminal_info.job_id)
-      vim.notify("Terminal process killed", vim.log.levels.INFO)
-    end
-  else
-    vim.notify("No active terminal found", vim.log.levels.WARN)
-  end
-end
-
--- Toggle terminal visibility
-function M.toggle_terminal()
-  local existing_terminal = M.find_existing_terminal()
-  
-  if existing_terminal then
-    local win_id = existing_terminal.win
-    if vim.api.nvim_win_is_valid(win_id) then
-      -- If terminal window is currently focused, close it
-      if vim.api.nvim_get_current_win() == win_id then
-        vim.api.nvim_win_close(win_id, false)
-      else
-        -- Focus the terminal window
-        vim.api.nvim_set_current_win(win_id)
-      end
-    else
-      -- Window is closed but buffer exists, create new split
-      M.create_terminal_split()
-    end
-  else
-    -- No existing terminal, create new one
-    M.create_terminal_split()
-  end
-end
-
--- Get terminal status information
-function M.get_terminal_status()
-  local active_count = 0
-  local terminal_list = {}
-  
-  for buf_id, terminal_info in pairs(terminals) do
-    if vim.api.nvim_buf_is_valid(terminal_info.buf) then
-      active_count = active_count + 1
-      table.insert(terminal_list, {
-        buf_id = buf_id,
-        win_id = terminal_info.win,
-        job_id = terminal_info.job_id,
-        direction = terminal_info.direction,
-        created_at = terminal_info.created_at,
-        is_current = buf_id == current_terminal
-      })
-    end
-  end
-  
-  return {
-    active_count = active_count,
-    current_terminal = current_terminal,
-    terminals = terminal_list
-  }
-end
 
 -- Configuration update function
 function M.setup(user_config)

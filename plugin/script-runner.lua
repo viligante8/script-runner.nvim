@@ -79,13 +79,6 @@ local function create_commands()
     desc = 'Run test scripts from package.json'
   })
   
-  vim.api.nvim_create_user_command('ScriptRunnerBuild', function()
-    local sr = ensure_loaded()
-    sr.run_category('build')
-  end, {
-    desc = 'Run build scripts from package.json'
-  })
-  
   vim.api.nvim_create_user_command('ScriptRunnerDev', function()
     local sr = ensure_loaded()
     sr.run_category('start')
@@ -159,11 +152,6 @@ local function setup_default_keymaps()
     local sr = ensure_loaded()
     sr.run_category('test')
   end, { desc = 'Run test script' })
-  
-  vim.keymap.set('n', default_keymaps.run_build, function()
-    local sr = ensure_loaded()
-    sr.run_category('build')
-  end, { desc = 'Run build script' })
   
   vim.keymap.set('n', default_keymaps.run_dev, function()
     local sr = ensure_loaded()

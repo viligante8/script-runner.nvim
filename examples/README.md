@@ -5,16 +5,21 @@ This directory contains example configurations and sample files for the script-r
 ## Configuration Examples
 
 ### `minimal-config.lua`
+
 The simplest possible setup using all default settings. Perfect for getting started quickly.
 
 ### `default-config.lua`
+
 Shows all available configuration options with their default values. Use this as a reference for customizing the plugin.
 
 ### `custom-keymaps.lua`
+
 Demonstrates how to customize keybindings for the plugin, including both built-in customization and manual keymap definition.
 
 ### `advanced-config.lua`
+
 Advanced configuration example showing:
+
 - Floating terminal windows
 - Custom terminal settings
 - Additional user commands
@@ -23,7 +28,9 @@ Advanced configuration example showing:
 ## Sample Files
 
 ### `sample-package.json`
+
 A realistic `package.json` file with various script types for testing the plugin functionality. This includes:
+
 - Start/dev scripts
 - Build scripts
 - Test scripts
@@ -45,7 +52,7 @@ Or integrate the setup call directly into your existing configuration:
 ```lua
 -- In your lazy.nvim, packer, or similar plugin manager
 {
-  'your-username/script-runner.nvim',
+  'viligante8/script-runner.nvim',
   config = function()
     -- Copy configuration from examples here
     require('script-runner').setup({

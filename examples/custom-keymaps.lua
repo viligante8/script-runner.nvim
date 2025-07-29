@@ -28,6 +28,5 @@ local script_runner = require('script-runner')
 vim.keymap.set('n', '<F5>', script_runner.run_script, { desc = 'Run script' })
 vim.keymap.set('n', '<F6>', script_runner.run_last_script, { desc = 'Run last script' })
 vim.keymap.set('n', '<leader>tt', function() script_runner.run_category('test') end, { desc = 'Run tests' })
-vim.keymap.set('n', '<leader>bb', function() script_runner.run_category('build') end, { desc = 'Run build' })
 vim.keymap.set('n', '<leader>dd', function() script_runner.run_category('start') end, { desc = 'Run dev server' })
 --]]

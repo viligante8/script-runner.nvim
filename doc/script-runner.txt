@@ -1,18 +1,18 @@
 *script-runner.txt*    Plugin for running project scripts
 
-Author: Vito Pistelli <contact@example.com>
+Author: Vito Pistelli <@viligante8>
 License: MIT
 
 ==============================================================================
 INTRODUCTION                                                      *script-runner*
 
-Script-Runner is a Neovim plugin to run scripts from your JavaScript
+script-runner.nvim is a Neovim plugin to run scripts from your Typescript/Javascript
 project's `package.json` file using various package managers (npm, yarn, bun).
 
 Features:
-- Script categorization and filtering.
-- Customizable keymaps.
 - Interactive picker to select and run scripts.
+- Customizable keymaps.
+- Script categorization and filtering.
 
 ==============================================================================
 INSTALLATION                                                  *script-runner-install*

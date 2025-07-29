@@ -1,6 +1,7 @@
 # script-runner.nvim
 
-A Neovim plugin designed to simplify the execution of scripts defined within `package.json` for JavaScript projects. It supports various package managers and provides a streamlined interface with customizable options.
+A Neovim plugin designed to simplify the execution of scripts defined within `package.json` for JavaScript projects.
+It supports various package managers and provides a streamlined interface with customizable options.
 
 ## Features
 
@@ -15,18 +16,17 @@ A Neovim plugin designed to simplify the execution of scripts defined within `pa
 
 ### Using lazy.nvim
 
-```lua
-require('lazy').setup({
-  'vito.pistelli/script-runner.nvim',
+```lua nvim/lua/plugins/script-runner.lua
+return {
+  'viligante8/script-runner.nvim',
   config = function()
     require('script-runner').setup({
-      -- Configuration options here
+      -- config options here
     })
-  end
-})
+}
 ```
 
-## Configuration
+## Configuration defaults
 
 ```lua
 require('script-runner').setup({
@@ -42,13 +42,13 @@ require('script-runner').setup({
 })
 ```
 
-## Default Keymaps
-
-- Run Script: `<leader>sr`
-- Run Last Script: `<leader>sR`
-- Run Test: `<leader>st`
-- Run Build: `<leader>sb`
-- Run Dev: `<leader>sd`
+| Commands        | Default Keymap |
+| --------------- | -------------- |
+| `:ScriptRunner` | `<leader>sr`   |
+| Run Last Script | `<leader>sR`   |
+| Run Test        | `<leader>st`   |
+| Run Build       | `<leader>sb`   |
+| Run Dev         | `<leader>sd`   |
 
 ## Usage
 
@@ -56,23 +56,14 @@ To run a script, use the command `:ScriptRunner` or the default keymap `<leader>
 
 Example output:
 
-```
-+------------------------------------+
-| Scripts Available                  |
-|------------------------------------|
-| 🎆  start - node server.js         |
-| 🧪  test - jest                    |
-+------------------------------------+
-```
-
-## Requirements and Dependencies
-
-- Neovim
-- Compatible package manager in the project directory (`npm`, `yarn`, `bun`, or `pnpm`)
+| Scripts Available         |
+| ------------------------- |
+| 🎆 start - node server.js |
+| 🧪 test - jest            |
 
 ## Troubleshooting
 
-- Ensure you are inside a JavaScript project with a valid `package.json`.
+- Ensure you are inside a directory with a valid `package.json`.
 - Verify that your package manager is supported and correctly detected.
 
 ## Contributing

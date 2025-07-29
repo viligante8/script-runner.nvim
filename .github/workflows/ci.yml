@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -19,14 +19,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Neovim
-        uses: rhymond/setup-neovim@v1
+        uses: rhysd/action-setup-vim@v1
         with:
+          neovim: true
           version: ${{ matrix.neovim_version }}
 
       - name: Setup Node.js (for testing JavaScript projects)
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 22
 
       - name: Install npm dependencies (if package.json exists)
         run: |
@@ -39,24 +40,16 @@ jobs:
           find . -name "*.lua" -exec luac -p {} \;
         continue-on-error: true
 
-      - name: Test plugin loading
-        run: |
-          nvim --headless --clean -u tests/minimal_init.lua -c "lua require('script-runner').setup({})" -c "q"
+      - name: Install LuaRocks
+        uses: leafo/gh-actions-lua@v11
 
-      - name: Run basic functionality test
+      - name: Install busted
         run: |
-          nvim --headless --clean -u tests/minimal_init.lua -c "
-          lua << EOF
-          require('script-runner').setup({})
-          -- Test that main functions exist
-          local sr = require('script-runner')
-          assert(type(sr.setup) == 'function', 'setup function exists')
-          assert(type(sr.run_script) == 'function', 'run_script function exists')
-          assert(type(sr.run_last_script) == 'function', 'run_last_script function exists')
-          assert(type(sr.run_category) == 'function', 'run_category function exists')
-          print('✓ All main functions exist')
-          EOF
-          " -c "q"
+          luarocks install busted
+
+      - name: Run tests with busted
+        run: |
+          busted --verbose tests/core_functionality_spec.lua
 
   lint:
     runs-on: ubuntu-latest
