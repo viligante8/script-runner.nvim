@@ -1,0 +1,15 @@
+# Ignore Lua module cache files
+*.luac
+
+# Ignore Vim swap files
+*.swp
+
+# Ignore session files
+Session.vim
+
+# Ignore tags and project-specific files
+/.tags
+/.netrwhist
+
+# Optional plugin files
+packer_compiled.vim

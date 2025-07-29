@@ -1,0 +1,38 @@
+{
+  "name": "example-project",
+  "version": "1.0.0",
+  "description": "Sample package.json for testing script-runner.nvim",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/",
+    "clean": "rm -rf dist/",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "postinstall": "echo 'Installation complete!'",
+    "debug": "node --inspect server.js",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "keywords": ["example"],
+  "author": "Test User",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^2.7.0",
+    "webpack": "^5.74.0",
+    "nodemon": "^2.0.19"
+  }
+}

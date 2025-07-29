@@ -1,0 +1,21 @@
+# Stylua configuration for script-runner.nvim
+# This file configures the Lua code formatter
+
+# Use double quotes for strings
+quote_style = "Double"
+
+# Use 2 spaces for indentation
+indent_type = "Spaces"
+indent_width = 2
+
+# Keep trailing commas in tables
+trailing_comma = "Smart"
+
+# Line width for wrapping
+column_width = 100
+
+# Call parentheses style
+call_parentheses = "Always"
+
+# Collapse simple statements onto one line
+collapse_simple_statement = "Always"

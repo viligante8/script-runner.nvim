@@ -1,0 +1,61 @@
+*script-runner.txt*    Plugin for running project scripts
+
+Author: Vito Pistelli <contact@example.com>
+License: MIT
+
+==============================================================================
+INTRODUCTION                                                      *script-runner*
+
+Script-Runner is a Neovim plugin to run scripts from your JavaScript
+project's `package.json` file using various package managers (npm, yarn, bun).
+
+Features:
+- Script categorization and filtering.
+- Customizable keymaps.
+- Interactive picker to select and run scripts.
+
+==============================================================================
+INSTALLATION                                                  *script-runner-install*
+
+For installation instructions, refer to |README.md|.
+
+==============================================================================
+USAGE                                                         *script-runner-usage*
+
+Run scripts interactively with:
+    :ScriptRunner
+
+Re-run the last executed script with:
+    :ScriptRunnerLast
+
+Run a specific script category:
+    :ScriptRunnerTest
+    :ScriptRunnerBuild
+    :ScriptRunnerDev
+
+==============================================================================
+DEFAULT KEYMAPS                                              *script-runner-keymaps*
+
+- Run Script: `<leader>sr`
+- Run Last Script: `<leader>sR`
+- Run Test: `<leader>st`
+- Run Build: `<leader>sb`
+- Run Dev: `<leader>sd`
+
+==============================================================================
+CONFIGURATION                                               *script-runner-config*
+
+For detailed configuration options, refer to |README.md|.
+
+==============================================================================
+CONTRIBUTING                                                  *script-runner-contrib*
+
+Please submit issues or pull requests via GitHub. All contributions are welcome.
+
+==============================================================================
+LICENSE                                                       *script-runner-license*
+
+See |LICENSE| for the full MIT license text.
+
+==============================================================================
+

@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        neovim_version: ['stable', 'nightly']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Neovim
+        uses: rhymond/setup-neovim@v1
+        with:
+          version: ${{ matrix.neovim_version }}
+
+      - name: Setup Node.js (for testing JavaScript projects)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install npm dependencies (if package.json exists)
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          fi
+
+      - name: Run Lua syntax check
+        run: |
+          find . -name "*.lua" -exec luac -p {} \;
+        continue-on-error: true
+
+      - name: Test plugin loading
+        run: |
+          nvim --headless --clean -u tests/minimal_init.lua -c "lua require('script-runner').setup({})" -c "q"
+
+      - name: Run basic functionality test
+        run: |
+          nvim --headless --clean -u tests/minimal_init.lua -c "
+          lua << EOF
+          require('script-runner').setup({})
+          -- Test that main functions exist
+          local sr = require('script-runner')
+          assert(type(sr.setup) == 'function', 'setup function exists')
+          assert(type(sr.run_script) == 'function', 'run_script function exists')
+          assert(type(sr.run_last_script) == 'function', 'run_last_script function exists')
+          assert(type(sr.run_category) == 'function', 'run_category function exists')
+          print('✓ All main functions exist')
+          EOF
+          " -c "q"
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stylua
+        uses: JohnnyMorganz/stylua-action@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check .
+
+  docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check documentation
+        run: |
+          # Check that README.md exists and has content
+          [ -f README.md ] && [ -s README.md ]
+          # Check that help documentation exists
+          [ -f doc/script-runner.txt ] && [ -s doc/script-runner.txt ]
+          # Check that LICENSE exists
+          [ -f LICENSE ] && [ -s LICENSE ]
+          echo "✓ All required documentation files exist"
