@@ -25,23 +25,62 @@ local LIFECYCLE_SCRIPTS = {
   'prepublish', 'prepare', 'prepublishOnly', 'publish', 'postpublish'
 }
 
--- Script category patterns
+-- Script category patterns - now includes both name and command patterns
 local CATEGORY_PATTERNS = {
-  start = { '^start', '^serve', '^dev' },
-  test = { '^test', '^spec', '^jest', '^mocha', '^vitest' },
-  build = { '^build', '^compile', '^bundle', '^dist' },
-  lint = { '^lint', '^eslint', '^tslint', '^prettier' },
-  format = { '^format', '^fmt', '^prettier' },
-  deploy = { '^deploy', '^publish', '^release' },
-  clean = { '^clean', '^clear', '^reset' },
-  watch = { '^watch', '^dev' },
-  docs = { '^docs', '^doc', '^generate%-docs' },
-  install = { '^install', '^setup', '^bootstrap' }
+  start = {
+    name = { '^start', '^serve', '^server', '^run', '^go', '^launch' },
+    command = { 'node.*server', 'npm.*start', 'yarn.*start', 'serve', 'http%-server', 'live%-server' }
+  },
+  dev = {
+    name = { '^dev', '^develop', '^development', '^serve%-dev', '^start%-dev' },
+    command = { 'webpack%-dev%-server', 'vite', 'next.*dev', 'nuxt.*dev', 'nodemon', 'ts%-node%-dev' }
+  },
+  test = {
+    name = { '^test', '^spec', '^jest', '^mocha', '^vitest', '^cypress', '^e2e', '^unit', '^integration' },
+    command = { 'jest', 'mocha', 'vitest', 'cypress', 'playwright', 'karma', 'ava', 'tap', 'nyc' }
+  },
+  build = {
+    name = { '^build', '^compile', '^bundle', '^dist', '^pack', '^rollup', '^webpack' },
+    command = { 'webpack', 'rollup', 'vite.*build', 'next.*build', 'nuxt.*build', 'tsc', 'babel', 'esbuild', 'parcel' }
+  },
+  lint = {
+    name = { '^lint', '^eslint', '^tslint', '^check', '^validate' },
+    command = { 'eslint', 'tslint', 'stylelint', 'prettier.*check', 'tsc.*noEmit' }
+  },
+  format = {
+    name = { '^format', '^fmt', '^prettier', '^fix' },
+    command = { 'prettier.*write', 'eslint.*fix', 'stylelint.*fix' }
+  },
+  deploy = {
+    name = { '^deploy', '^publish', '^release', '^ship', '^push' },
+    command = { 'gh%-pages', 'firebase.*deploy', 'vercel', 'netlify', 'surge', 'aws', 'docker.*push' }
+  },
+  clean = {
+    name = { '^clean', '^clear', '^reset', '^rm', '^remove' },
+    command = { 'rm %-rf', 'rimraf', 'del', 'shx.*rm' }
+  },
+  watch = {
+    name = { '^watch', '^dev', '^monitor' },
+    command = { 'nodemon', 'chokidar', 'onchange', 'watch' }
+  },
+  docs = {
+    name = { '^docs', '^doc', '^generate%-docs', '^storybook', '^typedoc' },
+    command = { 'typedoc', 'jsdoc', 'storybook', 'docusaurus', 'vuepress' }
+  },
+  install = {
+    name = { '^install', '^setup', '^bootstrap', '^prepare', '^postinstall' },
+    command = { 'husky.*install', 'patch%-package', 'install%-peers' }
+  },
+  typecheck = {
+    name = { '^typecheck', '^type%-check', '^tsc', '^types' },
+    command = { 'tsc.*noEmit', 'vue%-tsc' }
+  }
 }
 
 -- Icon mapping for different script categories
 local SCRIPT_ICONS = {
-  start = '🎆',
+  start = '🚦',
+  dev = '⚡',
   test = '🧪',
   build = '🔨',
   lint = '🔍',
@@ -51,9 +90,10 @@ local SCRIPT_ICONS = {
   watch = '👀',
   docs = '📚',
   install = '📦',
+  typecheck = '🔎',
   debug = '🐛',
   lifecycle = '⚙️',
-  unknown = '📄'
+  unknown = '❓'
 }
 
 ---Get icon for a script category
@@ -89,10 +129,28 @@ local function categorize_script(script_name, script_command)
     return 'lifecycle'
   end
   
+  -- Check debug scripts first
+  if is_debug_script(script_name, script_command) then
+    return 'debug'
+  end
+  
+  -- Check each category
   for category, patterns in pairs(CATEGORY_PATTERNS) do
-    for _, pattern in ipairs(patterns) do
-      if script_name:match(pattern) then
-        return category
+    -- Check name patterns first
+    if patterns.name then
+      for _, pattern in ipairs(patterns.name) do
+        if script_name:match(pattern) then
+          return category
+        end
+      end
+    end
+    
+    -- Check command patterns if no name match
+    if patterns.command then
+      for _, pattern in ipairs(patterns.command) do
+        if script_command:match(pattern) then
+          return category
+        end
       end
     end
   end

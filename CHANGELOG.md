@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Enhanced script categorization with command pattern matching
+- New script categories: `dev`, `typecheck` with dedicated icons
+- More comprehensive pattern matching for better icon assignment
+- Support for modern tools: Vite, Next.js, Nuxt, TypeScript, ESBuild, etc.
+
+### Changed
+- **BREAKING**: Telescope picker now uses smaller, centered layout instead of full-screen
+- Improved script categorization logic to check both script names and commands
+- Enhanced icon matching with more specific patterns for development tools
+- Script categorization now prioritizes name patterns over command patterns
+
+### Fixed
+- Picker window size issue where Telescope showed full-screen instead of compact view
+- Poor icon matching causing most scripts to show generic paper icon
+- Missing categorization for common development scripts (dev servers, type checking)
+
+## [1.0.1] - 2024-07-29
+
+### Added
 - Initial implementation of script-runner.nvim
 - Support for npm, yarn, bun, and pnpm package managers
 - Interactive script picker with categorization

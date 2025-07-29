@@ -1,48 +1,36 @@
 # script-runner.nvim
 
-A Neovim plugin designed to simplify running scripts defined in `package.json` for JavaScript projects. It supports executing scripts through package managers like npm, yarn, and bun. Features include automatic script categorization, advanced filtering, and integration with Neovim's terminal.
+A Neovim plugin designed to simplify the execution of scripts defined within `package.json` for JavaScript projects. It supports various package managers and provides a streamlined interface with customizable options.
 
 ## Features
-- Automatic detection of JavaScript package managers.
-- Script categorization and filtering.
-- Customizable keymaps.
-- Interactive picker to select and run scripts.
+
+- Automatic detection of JavaScript package managers (npm, yarn, bun, pnpm)
+- Script categorization and filtering
+- Customizable keymaps
+- Interactive picker to select and run scripts
+- Terminal integration
+- Configuration flexibility
 
 ## Installation
 
 ### Using lazy.nvim
+
 ```lua
 require('lazy').setup({
   'vito.pistelli/script-runner.nvim',
   config = function()
-    require('script-runner').setup({})
+    require('script-runner').setup({
+      -- Configuration options here
+    })
   end
 })
 ```
 
-### Using packer.nvim
-```lua
-use {
-  'vito.pistelli/script-runner.nvim',
-  config = function()
-    require('script-runner').setup({})
-  end
-}
-```
-
-### Using vim-plug
-```vim
-Plug 'vito.pistelli/script-runner.nvim'
-
-lua << EOF
-require('script-runner').setup({})
-EOF
-```
-
 ## Configuration
+
 ```lua
 require('script-runner').setup({
-  split_direction = "vertical", -- auto/horizontal
+  split_direction = "vertical", -- Choose: auto/horizontal/vertical
   terminal_reuse = true,
   keymaps = {
     enabled = true,
@@ -54,8 +42,19 @@ require('script-runner').setup({
 })
 ```
 
+## Default Keymaps
+
+- Run Script: `<leader>sr`
+- Run Last Script: `<leader>sR`
+- Run Test: `<leader>st`
+- Run Build: `<leader>sb`
+- Run Dev: `<leader>sd`
+
 ## Usage
-To run a script, use the command `:ScriptRunner` or the default keymap `<leader>sr`. Below are some screenshots showing the usage:
+
+To run a script, use the command `:ScriptRunner` or the default keymap `<leader>sr`.
+
+Example output:
 
 ```
 +------------------------------------+
@@ -66,20 +65,20 @@ To run a script, use the command `:ScriptRunner` or the default keymap `<leader>
 +------------------------------------+
 ```
 
-## Default Keymaps
-- Run Script: `<leader>sr`
-- Run Last Script: `<leader>sR`
-- Run Test: `<leader>st`
-- Run Build: `<leader>sb`
-- Run Dev: `<leader>sd`
+## Requirements and Dependencies
+
+- Neovim
+- Compatible package manager in the project directory (`npm`, `yarn`, `bun`, or `pnpm`)
 
 ## Troubleshooting
+
 - Ensure you are inside a JavaScript project with a valid `package.json`.
 - Verify that your package manager is supported and correctly detected.
 
 ## Contributing
+
 Please submit issues or pull requests via GitHub. All contributions are welcome.
 
 ## License
-MIT License
 
+MIT License
