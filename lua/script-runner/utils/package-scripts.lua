@@ -113,6 +113,9 @@ local SCRIPT_ICONS = {
   fix = '🔧',
   check = '🔎',
   lifecycle = '⚙️',
+  migrate = '🐪',
+  db = '🏓',
+  database = '🏓',
   unknown = '📄'
 }
 
