@@ -95,23 +95,23 @@ local CATEGORY_PATTERNS = {
 
 -- Icon mapping for different script categories
 local SCRIPT_ICONS = {
-  start = '🎆',
-  dev = '⚡',
+  start = '🏎️',
+  dev = '🏎️',
   test = '🧪',
   build = '🔨',
-  lint = '🔍',
-  format = '✨',
-  deploy = '🚀',
-  clean = '🧹',
+  deploy = '🚢',
+  docker = '🐳',
+  debug = '🪲',
   watch = '👀',
   docs = '📚',
   install = '📦',
   typecheck = '🔎',
   generate = '⚡',
+  clean = '🧹',
+  lint = '🔎',
+  format = '🧹',
   fix = '🔧',
-  check = '✅',
-  docker = '🐳',
-  debug = '🐛',
+  check = '🔎',
   lifecycle = '⚙️',
   unknown = '📄'
 }

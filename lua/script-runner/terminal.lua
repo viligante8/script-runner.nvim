@@ -19,58 +19,31 @@ local package_managers = {
     install = "npm install",
     run = "npm run",
     test = "npm test",
-    build = "npm run build",
-    dev = "npm run dev",
     start = "npm start"
   },
   yarn = {
     install = "yarn install",
     run = "yarn",
     test = "yarn test",
-    build = "yarn build",
-    dev = "yarn dev",
     start = "yarn start"
   },
   pnpm = {
     install = "pnpm install",
     run = "pnpm run",
     test = "pnpm test",
-    build = "pnpm run build",
-    dev = "pnpm dev",
     start = "pnpm start"
   },
   bun = {
     install = "bun install",
     run = "bun run",
     test = "bun test",
-    build = "bun run build",
-    dev = "bun dev",
     start = "bun start"
   },
   pip = {
     install = "pip install -r requirements.txt",
     run = "python",
     test = "pytest",
-    build = "python setup.py build",
-    dev = "python -m",
-    start = "python main.py"
   },
-  cargo = {
-    install = "cargo build",
-    run = "cargo run",
-    test = "cargo test",
-    build = "cargo build --release",
-    dev = "cargo run",
-    start = "cargo run --release"
-  },
-  go = {
-    install = "go mod download",
-    run = "go run",
-    test = "go test",
-    build = "go build",
-    dev = "go run",
-    start = "go run main.go"
-  }
 }
 
 -- Get optimal split direction based on window dimensions
@@ -226,10 +199,6 @@ local function build_package_command(script, package_manager)
     return pm_config.install
   elseif script == "test" and pm_config.test then
     return pm_config.test
-  elseif script == "build" and pm_config.build then
-    return pm_config.build
-  elseif script == "dev" and pm_config.dev then
-    return pm_config.dev
   elseif script == "start" and pm_config.start then
     return pm_config.start
   elseif pm_config.run then

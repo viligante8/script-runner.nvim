@@ -40,7 +40,9 @@ function M.create_terminal(position, size)
   
   -- Create terminal buffer
   terminal_buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_win_set_buf(terminal_win, terminal_buf)
+  if terminal_win then
+    vim.api.nvim_win_set_buf(terminal_win, terminal_buf)
+  end
   
   -- TODO: Start terminal job in the buffer
 end
