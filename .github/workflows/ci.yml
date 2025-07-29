@@ -36,20 +36,17 @@ jobs:
           fi
 
       - name: Run Lua syntax check
-        run: |
-          find . -name "*.lua" -exec luac -p {} \;
+        run: find . -name "*.lua" -exec luac -p {} \;
         continue-on-error: true
 
       - name: Install LuaRocks
         uses: leafo/gh-actions-lua@v11
 
       - name: Install busted
-        run: |
-          luarocks install busted
+        run: luarocks install busted
 
       - name: Run tests with busted
-        run: |
-          busted --verbose tests/core_functionality_spec.lua
+        run: busted --verbose tests/core_functionality_spec.lua
 
   lint:
     runs-on: ubuntu-latest
