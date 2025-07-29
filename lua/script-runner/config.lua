@@ -8,11 +8,9 @@ M.defaults = {
   include_debug = true,
   keymaps = {
     enabled = true,
-    run_script = "<leader>sr",
-    run_last = "<leader>sR",
-    run_test = "<leader>st",
-    run_build = "<leader>sb",
-    run_dev = "<leader>sd"
+    run_script = "<leader>dxr",
+    run_last = "<leader>dxR",
+    run_test = "<leader>dxt",
   },
   terminal_position = "right", -- right/bottom for splits
   window_size = 0.4 -- percentage of screen
@@ -58,7 +56,7 @@ local function validate_keymaps(keymaps)
   end
   
   -- Check required keys
-  local required_keys = { "enabled", "run_script", "run_last", "run_test", "run_build", "run_dev" }
+  local required_keys = { "enabled", "run_script", "run_last", "run_test" }
   for _, key in ipairs(required_keys) do
     if keymaps[key] == nil then
       return false, "keymaps." .. key .. " is required"
@@ -72,7 +70,7 @@ local function validate_keymaps(keymaps)
   
   -- Validate keymap strings (if enabled)
   if keymaps.enabled then
-    local keymap_fields = { "run_script", "run_last", "run_test", "run_build", "run_dev" }
+    local keymap_fields = { "run_script", "run_last", "run_test" }
     for _, field in ipairs(keymap_fields) do
       if type(keymaps[field]) ~= "string" or keymaps[field] == "" then
         return false, "keymaps." .. field .. " must be a non-empty string when keymaps are enabled"

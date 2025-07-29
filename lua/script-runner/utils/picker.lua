@@ -72,7 +72,14 @@ function M.pick_script(items, opts, callback)
     local actions = require("telescope.actions")
     local action_state = require("telescope.actions.state")
     
-    pickers.new({}, {
+    pickers.new({
+      -- Make the picker smaller and centered
+      layout_strategy = 'center',
+      layout_config = {
+        width = 0.6,
+        height = 0.4,
+      },
+    }, {
       prompt_title = prompt,
       finder = finders.new_table({
         results = items,

@@ -156,9 +156,9 @@ function M.create_terminal_split(direction, size)
   current_terminal = terminal_buf
   
   -- Set terminal buffer options
-  vim.api.nvim_buf_set_option(terminal_buf, "filetype", "terminal")
-  vim.api.nvim_buf_set_option(terminal_buf, "buflisted", false)
-  vim.api.nvim_buf_set_option(terminal_buf, "bufhidden", "wipe")
+  vim.bo[terminal_buf].filetype = "terminal"
+  vim.bo[terminal_buf].buflisted = false
+  vim.bo[terminal_buf].bufhidden = "wipe"
   
   -- Enter insert mode in terminal
   vim.cmd("startinsert")
