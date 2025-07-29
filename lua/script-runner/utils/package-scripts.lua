@@ -56,11 +56,11 @@ local CATEGORY_PATTERNS = {
     command = { 'gh%-pages', 'firebase.*deploy', 'vercel', 'netlify', 'surge', 'aws', 'docker.*push' }
   },
   clean = {
-    name = { '^clean', '^clear', '^reset', '^rm', '^remove' },
-    command = { 'rm %-rf', 'rimraf', 'del', 'shx.*rm' }
+    name = { '^clean', '^clear', '^reset', '^rm', '^remove', '^nuke' },
+    command = { 'rm %-rf', 'rimraf', 'del', 'shx.*rm', 'docker.*rm', 'docker.*system.*prune' }
   },
   watch = {
-    name = { '^watch', '^dev', '^monitor' },
+    name = { '^watch', '^monitor' },
     command = { 'nodemon', 'chokidar', 'onchange', 'watch' }
   },
   docs = {
@@ -74,12 +74,28 @@ local CATEGORY_PATTERNS = {
   typecheck = {
     name = { '^typecheck', '^type%-check', '^tsc', '^types' },
     command = { 'tsc.*noEmit', 'vue%-tsc' }
+  },
+  generate = {
+    name = { '^generate', '^gen', '^create' },
+    command = { 'generate', 'create', 'scaffold' }
+  },
+  fix = {
+    name = { '^fix' },
+    command = { 'fix', 'repair' }
+  },
+  check = {
+    name = { '^check' },
+    command = { 'check', 'validate', 'verify' }
+  },
+  docker = {
+    name = { '^docker', 'docker:' },
+    command = { 'docker', 'compose' }
   }
 }
 
 -- Icon mapping for different script categories
 local SCRIPT_ICONS = {
-  start = '🚦',
+  start = '🎆',
   dev = '⚡',
   test = '🧪',
   build = '🔨',
@@ -91,9 +107,13 @@ local SCRIPT_ICONS = {
   docs = '📚',
   install = '📦',
   typecheck = '🔎',
+  generate = '⚡',
+  fix = '🔧',
+  check = '✅',
+  docker = '🐳',
   debug = '🐛',
   lifecycle = '⚙️',
-  unknown = '❓'
+  unknown = '📄'
 }
 
 ---Get icon for a script category
