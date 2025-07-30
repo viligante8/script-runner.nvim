@@ -17,6 +17,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: leafo/gh-actions-lua@v9
+
+      - name: Install LuaRocks
+        uses: leafo/gh-actions-lua@v11
+
+      - name: Install busted
+        run: luarocks install busted
 
       - name: Install Neovim
         uses: rhysd/action-setup-vim@v1
@@ -37,13 +44,6 @@ jobs:
 
       - name: Run Lua syntax check
         run: find . -name "*.lua" -exec luac -p {} \;
-        continue-on-error: true
-
-      - name: Install LuaRocks
-        uses: leafo/gh-actions-lua@v11
-
-      - name: Install busted
-        run: luarocks install busted
 
       - name: Run tests with busted
         run: busted --verbose tests/core_functionality_spec.lua
