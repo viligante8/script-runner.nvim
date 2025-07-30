@@ -2,7 +2,7 @@
 # This file configures the Lua code formatter
 
 # Use double quotes for strings
-quote_style = "Double"
+quote_style = "ForceDouble"
 
 # Use 2 spaces for indentation
 indent_type = "Spaces"
