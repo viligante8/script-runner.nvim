@@ -45,23 +45,25 @@ function M.pick_script(items, opts, callback)
     vim.notify("Error: items parameter must be a table", vim.log.levels.ERROR)
     return
   end
-  
+
   if not callback or type(callback) ~= "function" then
     vim.notify("Error: callback parameter must be a function", vim.log.levels.ERROR)
     return
   end
-  
+
   -- Set default options if not provided
   opts = opts or {}
   local prompt = opts.prompt or "Select item:"
-  local format_item = opts.format_item or function(item) return tostring(item) end
-  
+  local format_item = opts.format_item or function(item)
+    return tostring(item)
+  end
+
   -- Handle empty items list
   if #items == 0 then
     vim.notify("No items to select from", vim.log.levels.WARN)
     return
   end
-  
+
   -- Check if telescope is available
   local has_telescope, telescope = pcall(require, "telescope")
   if has_telescope then
@@ -71,38 +73,40 @@ function M.pick_script(items, opts, callback)
     local conf = require("telescope.config").values
     local actions = require("telescope.actions")
     local action_state = require("telescope.actions.state")
-    
-    pickers.new({
-      -- Make the picker smaller and centered
-      layout_strategy = 'center',
-      layout_config = {
-        width = 0.6,
-        height = 0.4,
-      },
-    }, {
-      prompt_title = prompt,
-      finder = finders.new_table({
-        results = items,
-        entry_maker = function(entry)
-          return {
-            value = entry,
-            display = format_item(entry),
-            ordinal = format_item(entry),
-          }
-        end
-      }),
-      sorter = conf.generic_sorter({}),
-      attach_mappings = function(prompt_bufnr, map)
-        actions.select_default:replace(function()
-          actions.close(prompt_bufnr)
-          local selection = action_state.get_selected_entry()
-          if selection then
-            callback(selection.value)
-          end
-        end)
-        return true
-      end,
-    }):find()
+
+    pickers
+      .new({
+        -- Make the picker smaller and centered
+        layout_strategy = "center",
+        layout_config = {
+          width = 0.6,
+          height = 0.4,
+        },
+      }, {
+        prompt_title = prompt,
+        finder = finders.new_table({
+          results = items,
+          entry_maker = function(entry)
+            return {
+              value = entry,
+              display = format_item(entry),
+              ordinal = format_item(entry),
+            }
+          end,
+        }),
+        sorter = conf.generic_sorter({}),
+        attach_mappings = function(prompt_bufnr, map)
+          actions.select_default:replace(function()
+            actions.close(prompt_bufnr)
+            local selection = action_state.get_selected_entry()
+            if selection then
+              callback(selection.value)
+            end
+          end)
+          return true
+        end,
+      })
+      :find()
   else
     -- Fallback to vim.ui.select if telescope is not available
     vim.ui.select(items, {
@@ -111,6 +115,5 @@ function M.pick_script(items, opts, callback)
     }, callback)
   end
 end
-
 
 return M

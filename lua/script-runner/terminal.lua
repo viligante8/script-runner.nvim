@@ -19,25 +19,25 @@ local package_managers = {
     install = "npm install",
     run = "npm run",
     test = "npm test",
-    start = "npm start"
+    start = "npm start",
   },
   yarn = {
     install = "yarn install",
     run = "yarn",
     test = "yarn test",
-    start = "yarn start"
+    start = "yarn start",
   },
   pnpm = {
     install = "pnpm install",
     run = "pnpm run",
     test = "pnpm test",
-    start = "pnpm start"
+    start = "pnpm start",
   },
   bun = {
     install = "bun install",
     run = "bun run",
     test = "bun test",
-    start = "bun start"
+    start = "bun start",
   },
 }
 
@@ -45,17 +45,17 @@ local package_managers = {
 function M.get_optimal_split_direction()
   local win_width = vim.api.nvim_win_get_width(0)
   local win_height = vim.api.nvim_win_get_height(0)
-  
+
   -- If window is very wide, prefer vertical split
   if win_width >= config.vertical_split_threshold then
     return "vertical"
   end
-  
+
   -- If window is very tall, prefer horizontal split
   if win_height >= config.horizontal_split_threshold then
     return "horizontal"
   end
-  
+
   -- Default to horizontal for smaller windows
   return "horizontal"
 end
@@ -65,7 +65,7 @@ local function calculate_terminal_size(direction, size)
   if not size then
     size = config.default_terminal_size
   end
-  
+
   if direction == "vertical" then
     local win_width = vim.api.nvim_win_get_width(0)
     local calculated_size = math.floor(win_width * size)
@@ -81,7 +81,7 @@ end
 function M.create_terminal_split(direction, size)
   direction = direction or M.get_optimal_split_direction()
   local terminal_size = calculate_terminal_size(direction, size)
-  
+
   -- Create the split
   local split_cmd
   if direction == "vertical" then
@@ -89,27 +89,27 @@ function M.create_terminal_split(direction, size)
   else
     split_cmd = "split"
   end
-  
+
   vim.cmd(split_cmd)
-  
+
   -- Resize the split
   if direction == "vertical" then
     vim.cmd("vertical resize " .. terminal_size)
   else
     vim.cmd("resize " .. terminal_size)
   end
-  
+
   -- Create terminal buffer
   local terminal_buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_win_set_buf(0, terminal_buf)
-  
+
   -- Start terminal
   local job_id = vim.fn.termopen(vim.o.shell, {
     on_exit = function(_, exit_code)
       M.cleanup_terminal(terminal_buf)
-    end
+    end,
   })
-  
+
   -- Store terminal information
   local terminal_info = {
     buf = terminal_buf,
@@ -117,20 +117,20 @@ function M.create_terminal_split(direction, size)
     job_id = job_id,
     direction = direction,
     size = terminal_size,
-    created_at = os.time()
+    created_at = os.time(),
   }
-  
+
   terminals[terminal_buf] = terminal_info
   current_terminal = terminal_buf
-  
+
   -- Set terminal buffer options
   vim.bo[terminal_buf].filetype = "terminal"
   vim.bo[terminal_buf].buflisted = false
   vim.bo[terminal_buf].bufhidden = "wipe"
-  
+
   -- Enter insert mode in terminal
   vim.cmd("startinsert")
-  
+
   return terminal_info
 end
 
@@ -139,10 +139,12 @@ function M.find_existing_terminal()
   -- First, check if current_terminal is still valid
   if current_terminal and terminals[current_terminal] then
     local terminal_info = terminals[current_terminal]
-    
+
     -- Check if buffer and window are still valid
-    if vim.api.nvim_buf_is_valid(terminal_info.buf) and 
-       vim.api.nvim_win_is_valid(terminal_info.win) then
+    if
+      vim.api.nvim_buf_is_valid(terminal_info.buf)
+      and vim.api.nvim_win_is_valid(terminal_info.win)
+    then
       return terminal_info
     else
       -- Clean up invalid terminal
@@ -150,11 +152,13 @@ function M.find_existing_terminal()
       current_terminal = nil
     end
   end
-  
+
   -- Look for any valid terminal
   for buf_id, terminal_info in pairs(terminals) do
-    if vim.api.nvim_buf_is_valid(terminal_info.buf) and 
-       vim.api.nvim_win_is_valid(terminal_info.win) then
+    if
+      vim.api.nvim_buf_is_valid(terminal_info.buf)
+      and vim.api.nvim_win_is_valid(terminal_info.win)
+    then
       current_terminal = buf_id
       return terminal_info
     else
@@ -162,14 +166,14 @@ function M.find_existing_terminal()
       terminals[buf_id] = nil
     end
   end
-  
+
   return nil
 end
 
 -- Get or create terminal for script execution
 local function get_or_create_terminal()
   local existing_terminal = M.find_existing_terminal()
-  
+
   if existing_terminal then
     -- Focus existing terminal
     vim.api.nvim_set_current_win(existing_terminal.win)
@@ -186,9 +190,9 @@ local function build_package_command(script, package_manager)
     -- If no package manager specified or unknown, return script as-is
     return script
   end
-  
+
   local pm_config = package_managers[package_manager]
-  
+
   -- Handle common script patterns
   if script == "install" and pm_config.install then
     return pm_config.install
@@ -211,27 +215,27 @@ function M.execute_script(script, package_manager)
     vim.notify("No script provided", vim.log.levels.ERROR)
     return false
   end
-  
+
   local terminal_info = get_or_create_terminal()
   if not terminal_info then
     vim.notify("Failed to create or find terminal", vim.log.levels.ERROR)
     return false
   end
-  
+
   -- Build the command
   local command = build_package_command(script, package_manager)
-  
+
   -- Clear terminal and execute command
   vim.api.nvim_chan_send(terminal_info.job_id, "\r")
   vim.api.nvim_chan_send(terminal_info.job_id, "clear\r")
   vim.api.nvim_chan_send(terminal_info.job_id, command .. "\r")
-  
+
   -- Focus terminal window
   vim.api.nvim_set_current_win(terminal_info.win)
-  
+
   -- Scroll to bottom
   vim.cmd("normal! G")
-  
+
   vim.notify("Executing: " .. command, vim.log.levels.INFO)
   return true
 end
@@ -240,15 +244,15 @@ end
 function M.cleanup_terminal(buf_id)
   if buf_id and terminals[buf_id] then
     local terminal_info = terminals[buf_id]
-    
+
     -- Stop job if still running
     if terminal_info.job_id and vim.fn.jobstop then
       pcall(vim.fn.jobstop, terminal_info.job_id)
     end
-    
+
     -- Remove from tracking
     terminals[buf_id] = nil
-    
+
     if current_terminal == buf_id then
       current_terminal = nil
     end
@@ -263,7 +267,6 @@ function M.cleanup_all_terminals()
   terminals = {}
   current_terminal = nil
 end
-
 
 -- Configuration update function
 function M.setup(user_config)

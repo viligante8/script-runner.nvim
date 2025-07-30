@@ -10,10 +10,10 @@ local current_job = nil
 function M.run(command, args)
   -- TODO: Implement script execution logic
   print("Running command: " .. command .. (args and (" " .. args) or ""))
-  
+
   -- Stop any currently running job
   M.stop()
-  
+
   -- TODO: Start new job with proper terminal handling
 end
 

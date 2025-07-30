@@ -1,1 +1,1 @@
-return require('script-runner.init')
+return require("script-runner.init")

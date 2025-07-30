@@ -1,5 +1,5 @@
 -- Package Manager Detection Utility
--- 
+--
 -- This module provides automatic detection of JavaScript package managers (npm, yarn, bun)
 -- in project directories by examining lock files and package.json files.
 -- Adapted for script-runner.nvim plugin.
@@ -40,7 +40,7 @@ local M = {}
 ---
 ---Edge cases handled:
 ---• Non-existent directories → returns "unknown"
----• Permission denied → returns "unknown" 
+---• Permission denied → returns "unknown"
 ---• Paths with/without trailing slashes → normalized automatically
 ---• Special characters in paths → handled correctly
 ---
@@ -73,36 +73,38 @@ local M = {}
 ---  vim.notify("No JavaScript project detected", vim.log.levels.WARN)
 ---end
 function M.detect_package_manager(cwd)
-    -- Default to current working directory if not provided
-    cwd = cwd or vim.fn.getcwd()
-    
-    -- Ensure the path ends with a separator for consistent file path construction
-    if not cwd:match("/$") then
-        cwd = cwd .. "/"
-    end
-    
-    -- Check for Bun first (bun.lockb or bun.lock)
-    if vim.fn.filereadable(cwd .. "bun.lockb") == 1 or vim.fn.filereadable(cwd .. "bun.lock") == 1 then
-        return "bun"
-    end
-    
-    -- Check for Yarn (yarn.lock)
-    if vim.fn.filereadable(cwd .. "yarn.lock") == 1 then
-        return "yarn"
-    end
-    
-    -- Check for npm (package-lock.json)
-    if vim.fn.filereadable(cwd .. "package-lock.json") == 1 then
-        return "npm"
-    end
-    
-    -- Fallback: if package.json exists, assume npm
-    if vim.fn.filereadable(cwd .. "package.json") == 1 then
-        return "npm"
-    end
-    
-    -- No package manager detected
-    return "unknown"
+  -- Default to current working directory if not provided
+  cwd = cwd or vim.fn.getcwd()
+
+  -- Ensure the path ends with a separator for consistent file path construction
+  if not cwd:match("/$") then
+    cwd = cwd .. "/"
+  end
+
+  -- Check for Bun first (bun.lockb or bun.lock)
+  if
+    vim.fn.filereadable(cwd .. "bun.lockb") == 1 or vim.fn.filereadable(cwd .. "bun.lock") == 1
+  then
+    return "bun"
+  end
+
+  -- Check for Yarn (yarn.lock)
+  if vim.fn.filereadable(cwd .. "yarn.lock") == 1 then
+    return "yarn"
+  end
+
+  -- Check for npm (package-lock.json)
+  if vim.fn.filereadable(cwd .. "package-lock.json") == 1 then
+    return "npm"
+  end
+
+  -- Fallback: if package.json exists, assume npm
+  if vim.fn.filereadable(cwd .. "package.json") == 1 then
+    return "npm"
+  end
+
+  -- No package manager detected
+  return "unknown"
 end
 
 return M

@@ -1,16 +1,16 @@
 -- Custom keymaps configuration for script-runner.nvim
 -- This example shows how to customize keybindings
 
-require('script-runner').setup({
+require("script-runner").setup({
   keymaps = {
     enabled = true,
-    
+
     -- Custom keymaps using different leaders or key combinations
-    run_script = "<leader>rs",   -- Changed from default <leader>sr
-    run_last = "<leader>rl",     -- Changed from default <leader>sR
-    run_test = "<leader>rt",     -- Changed from default <leader>st
-    run_build = "<leader>rb",    -- Changed from default <leader>sb
-    run_dev = "<leader>rd",      -- Changed from default <leader>sd
+    run_script = "<leader>rs", -- Changed from default <leader>sr
+    run_last = "<leader>rl", -- Changed from default <leader>sR
+    run_test = "<leader>rt", -- Changed from default <leader>st
+    run_build = "<leader>rb", -- Changed from default <leader>sb
+    run_dev = "<leader>rd", -- Changed from default <leader>sd
   },
 })
 

@@ -4,46 +4,52 @@
 local M = {}
 
 -- Import utility modules
-local config = require('script-runner.config')
-local package_scripts = require('script-runner.utils.package-scripts')
-local package_manager = require('script-runner.utils.package-manager')
-local picker = require('script-runner.utils.picker')
-local terminal = require('script-runner.terminal')
+local config = require("script-runner.config")
+local package_scripts = require("script-runner.utils.package-scripts")
+local package_manager = require("script-runner.utils.package-manager")
+local picker = require("script-runner.utils.picker")
+local terminal = require("script-runner.terminal")
 
 -- State management
 local state = {
   last_executed_script = nil,
   last_executed_manager = nil,
-  last_executed_cwd = nil
+  last_executed_cwd = nil,
 }
 
 -- Setup function called by the plugin initialization
 function M.setup(opts)
   -- Setup configuration
   config.setup(opts or {})
-  
+
   -- Setup terminal with config
   terminal.setup({
-    terminal_min_height = config.get_value('window_size') and math.floor(vim.o.lines * config.get_value('window_size')) or 10,
-    terminal_min_width = config.get_value('window_size') and math.floor(vim.o.columns * config.get_value('window_size')) or 80,
+    terminal_min_height = config.get_value("window_size") and math.floor(
+      vim.o.lines * config.get_value("window_size")
+    ) or 10,
+    terminal_min_width = config.get_value("window_size") and math.floor(
+      vim.o.columns * config.get_value("window_size")
+    ) or 80,
   })
-  
+
   -- Setup keymaps if enabled
-  if config.get_value('keymaps.enabled') then
+  if config.get_value("keymaps.enabled") then
     M.setup_keymaps()
   end
 end
 
 -- Setup default keymaps
 function M.setup_keymaps()
-  local keymaps = config.get_value('keymaps')
+  local keymaps = config.get_value("keymaps")
   if not keymaps or not keymaps.enabled then
     return
   end
-  
-  vim.keymap.set('n', keymaps.run_script, M.run_script, { desc = 'Run script' })
-  vim.keymap.set('n', keymaps.run_last, M.run_last_script, { desc = 'Run last script' })
-  vim.keymap.set('n', keymaps.run_test, function() M.run_category('test') end, { desc = 'Run test script' })
+
+  vim.keymap.set("n", keymaps.run_script, M.run_script, { desc = "Run script" })
+  vim.keymap.set("n", keymaps.run_last, M.run_last_script, { desc = "Run last script" })
+  vim.keymap.set("n", keymaps.run_test, function()
+    M.run_category("test")
+  end, { desc = "Run test script" })
 end
 
 -- Helper function to check if we're in a JavaScript project
@@ -62,16 +68,19 @@ local function execute_selected_script(script, manager, cwd)
     vim.notify("No script selected", vim.log.levels.WARN)
     return
   end
-  
+
   -- Store last executed script for re-running
   state.last_executed_script = script
   state.last_executed_manager = manager
   state.last_executed_cwd = cwd
-  
+
   -- Execute the script
   local success = terminal.execute_script(script.name, manager)
   if success then
-    vim.notify(string.format("Executing %s script: %s", manager or "unknown", script.name), vim.log.levels.INFO)
+    vim.notify(
+      string.format("Executing %s script: %s", manager or "unknown", script.name),
+      vim.log.levels.INFO
+    )
   else
     vim.notify("Failed to execute script", vim.log.levels.ERROR)
   end
@@ -80,41 +89,44 @@ end
 -- Main function to show picker and run selected script
 function M.run_script()
   local cwd = vim.fn.getcwd()
-  
+
   -- Check if we're in a JavaScript project
   if not is_js_project(cwd) then
-    vim.notify("No package.json found in current directory or parent directories", vim.log.levels.WARN)
+    vim.notify(
+      "No package.json found in current directory or parent directories",
+      vim.log.levels.WARN
+    )
     return
   end
-  
+
   -- Detect package manager
   local manager = package_manager.detect_package_manager(cwd)
   if manager == "unknown" then
     vim.notify("Could not detect package manager", vim.log.levels.WARN)
     manager = "npm" -- fallback to npm
   end
-  
+
   -- Get package scripts with filtering
   local filter_options = {
-    exclude_lifecycle = config.get_value('exclude_lifecycle'),
-    exclude_debug = not config.get_value('include_debug')
+    exclude_lifecycle = config.get_value("exclude_lifecycle"),
+    exclude_debug = not config.get_value("include_debug"),
   }
-  
+
   local scripts, err = package_scripts.get_package_scripts(cwd, filter_options)
   if not scripts then
     vim.notify("Error getting package scripts: " .. (err or "unknown error"), vim.log.levels.ERROR)
     return
   end
-  
+
   if #scripts == 0 then
     vim.notify("No scripts found in package.json", vim.log.levels.WARN)
     return
   end
-  
+
   -- Show picker
   picker.pick_script(scripts, {
     prompt = string.format("Select script to run (%s):", manager),
-    format_item = format_script_item
+    format_item = format_script_item,
   }, function(selected_script)
     execute_selected_script(selected_script, manager, cwd)
   end)
@@ -126,22 +138,22 @@ function M.run_last_script()
     vim.notify("No script has been executed yet", vim.log.levels.WARN)
     return
   end
-  
+
   local cwd = state.last_executed_cwd or vim.fn.getcwd()
-  
+
   -- Check if we're still in a JavaScript project
   if not is_js_project(cwd) then
     vim.notify("No package.json found - cannot re-run last script", vim.log.levels.WARN)
     return
   end
-  
+
   -- Verify the script still exists
   local scripts, err = package_scripts.get_package_scripts(cwd)
   if not scripts then
     vim.notify("Error getting package scripts: " .. (err or "unknown error"), vim.log.levels.ERROR)
     return
   end
-  
+
   local script_exists = false
   for _, script in ipairs(scripts) do
     if script.name == state.last_executed_script.name then
@@ -149,12 +161,15 @@ function M.run_last_script()
       break
     end
   end
-  
+
   if not script_exists then
-    vim.notify(string.format("Script '%s' no longer exists in package.json", state.last_executed_script.name), vim.log.levels.WARN)
+    vim.notify(
+      string.format("Script '%s' no longer exists in package.json", state.last_executed_script.name),
+      vim.log.levels.WARN
+    )
     return
   end
-  
+
   -- Re-execute the script
   execute_selected_script(state.last_executed_script, state.last_executed_manager, cwd)
 end
@@ -162,48 +177,51 @@ end
 -- Run scripts filtered by category
 function M.run_category(category)
   local cwd = vim.fn.getcwd()
-  
+
   -- Check if we're in a JavaScript project
   if not is_js_project(cwd) then
-    vim.notify("No package.json found in current directory or parent directories", vim.log.levels.WARN)
+    vim.notify(
+      "No package.json found in current directory or parent directories",
+      vim.log.levels.WARN
+    )
     return
   end
-  
+
   -- Detect package manager
   local manager = package_manager.detect_package_manager(cwd)
   if manager == "unknown" then
     vim.notify("Could not detect package manager", vim.log.levels.WARN)
     manager = "npm" -- fallback to npm
   end
-  
+
   -- Get package scripts filtered by category
   local filter_options = {
-    exclude_lifecycle = config.get_value('exclude_lifecycle'),
-    exclude_debug = not config.get_value('include_debug'),
-    categories = { category }
+    exclude_lifecycle = config.get_value("exclude_lifecycle"),
+    exclude_debug = not config.get_value("include_debug"),
+    categories = { category },
   }
-  
+
   local scripts, err = package_scripts.get_package_scripts(cwd, filter_options)
   if not scripts then
     vim.notify("Error getting package scripts: " .. (err or "unknown error"), vim.log.levels.ERROR)
     return
   end
-  
+
   if #scripts == 0 then
     vim.notify(string.format("No %s scripts found in package.json", category), vim.log.levels.WARN)
     return
   end
-  
+
   -- If only one script in category, run it directly
   if #scripts == 1 then
     execute_selected_script(scripts[1], manager, cwd)
     return
   end
-  
+
   -- Show picker for multiple scripts in category
   picker.pick_script(scripts, {
     prompt = string.format("Select %s script to run (%s):", category, manager),
-    format_item = format_script_item
+    format_item = format_script_item,
   }, function(selected_script)
     execute_selected_script(selected_script, manager, cwd)
   end)
@@ -239,27 +257,30 @@ end
 -- Run a specific script by name (for command line usage)
 function M.run_specific_script(script_name)
   local cwd = vim.fn.getcwd()
-  
+
   -- Check if we're in a JavaScript project
   if not is_js_project(cwd) then
-    vim.notify("No package.json found in current directory or parent directories", vim.log.levels.WARN)
+    vim.notify(
+      "No package.json found in current directory or parent directories",
+      vim.log.levels.WARN
+    )
     return
   end
-  
+
   -- Detect package manager
   local manager = package_manager.detect_package_manager(cwd)
   if manager == "unknown" then
     vim.notify("Could not detect package manager", vim.log.levels.WARN)
     manager = "npm" -- fallback to npm
   end
-  
+
   -- Get package scripts
   local scripts, err = package_scripts.get_package_scripts(cwd)
   if not scripts then
     vim.notify("Error getting package scripts: " .. (err or "unknown error"), vim.log.levels.ERROR)
     return
   end
-  
+
   -- Find the specific script
   local target_script = nil
   for _, script in ipairs(scripts) do
@@ -268,12 +289,15 @@ function M.run_specific_script(script_name)
       break
     end
   end
-  
+
   if not target_script then
-    vim.notify(string.format("Script '%s' not found in package.json", script_name), vim.log.levels.WARN)
+    vim.notify(
+      string.format("Script '%s' not found in package.json", script_name),
+      vim.log.levels.WARN
+    )
     return
   end
-  
+
   -- Execute the script directly
   execute_selected_script(target_script, manager, cwd)
 end
@@ -281,24 +305,24 @@ end
 -- Get list of available scripts for command completion
 function M.get_available_scripts()
   local cwd = vim.fn.getcwd()
-  
+
   -- Check if we're in a JavaScript project
   if not is_js_project(cwd) then
     return {}
   end
-  
+
   -- Get package scripts
   local scripts, err = package_scripts.get_package_scripts(cwd)
   if not scripts then
     return {}
   end
-  
+
   -- Extract script names for completion
   local script_names = {}
   for _, script in ipairs(scripts) do
     table.insert(script_names, script.name)
   end
-  
+
   return script_names
 end
 
