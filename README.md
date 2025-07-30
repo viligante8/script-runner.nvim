@@ -1,4 +1,4 @@
-# script-runner.nvim
+# script-runner.nvim [![CI](https://github.com/viligante8/script-runner.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/viligante8/script-runner.nvim/actions/workflows/ci.yml)
 
 A Neovim plugin designed to simplify the execution of scripts defined within `package.json` for JavaScript projects.
 It supports various package managers and provides a streamlined interface with customizable options.
